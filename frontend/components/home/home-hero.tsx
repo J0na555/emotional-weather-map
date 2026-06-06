@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { ArrowRight, Sparkles } from 'lucide-react'
 import { ButtonLink } from '@/components/button-link'
 import { EmotionMap, EMOTION_COLORS } from '@/components/emotion-map'
+import { LivePulse } from '@/components/home/live-pulse'
 
 const cities = ['Addis Ababa', 'your campus', 'your city', 'your organization', 'Adama']
 

@@ -11,9 +11,8 @@ import {
 } from 'lucide-react'
 import { PageHero } from '@/components/page-hero'
 import { SectionLabel } from '@/components/section-label'
-import { TrendChart } from '@/components/trend-chart'
 import { ButtonLink } from '@/components/button-link'
-import { EMOTION_COLORS } from '@/components/emotion-map'
+import { IntelligenceLive } from '@/components/intelligence/intelligence-live'
 
 export const metadata: Metadata = {
   title: 'AI Emotional Intelligence — Emotional Weather Map',
@@ -75,56 +74,7 @@ export default function IntelligencePage() {
         </ButtonLink>
       </PageHero>
 
-      {/* forecast showcase */}
-      <section className="mx-auto max-w-7xl px-5 py-20 sm:px-8">
-        <div className="grid gap-5 lg:grid-cols-3">
-          <div className="rounded-3xl border border-border/70 bg-card p-7 lg:col-span-2">
-            <div className="flex items-center gap-2">
-              <Sparkles className="size-4 text-primary" />
-              <p className="text-sm font-medium text-foreground">
-                Today&apos;s emotional forecast · Addis Ababa
-              </p>
-            </div>
-            <p className="mt-4 text-pretty font-serif text-2xl leading-snug text-foreground">
-              &ldquo;A calm, hopeful morning easing into a busier afternoon.
-              Energy stays high in the east; watch for rising stress downtown
-              after 3pm.&rdquo;
-            </p>
-            <div className="mt-6">
-              <TrendChart
-                points={[52, 58, 55, 63, 67, 64, 70, 72, 69, 74]}
-                color={EMOTION_COLORS.calm}
-              />
-            </div>
-            <p className="mt-3 text-xs text-muted-foreground">
-              7-day collective mood · confidence 86%
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-5">
-            <div className="rounded-3xl border border-border/70 bg-card p-6">
-              <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                <AlertTriangle className="size-4 text-[oklch(0.64_0.19_25)]" />
-                Burnout watch
-              </div>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                2 districts entering an early-warning window. A gentle
-                intervention now can prevent a harder week.
-              </p>
-            </div>
-            <div className="rounded-3xl border border-border/70 bg-card p-6">
-              <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                <Leaf className="size-4 text-[oklch(0.7_0.13_160)]" />
-                Recommendation
-              </div>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                Encourage outdoor breaks between 3–5pm downtown. Communities
-                that did this last week recovered 18% faster.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <IntelligenceLive />
 
       {/* capabilities */}
       <section className="border-t border-border/60 bg-secondary/40">
