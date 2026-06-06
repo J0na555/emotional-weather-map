@@ -28,3 +28,4 @@ grant select on public.emotion_breakdown_24h to anon, authenticated;
 grant select on public.emotion_breakdown_7d to anon, authenticated;
 grant execute on function public.get_similar_feeling_count(text, text) to anon, authenticated;
 grant execute on function public.get_area_insights(text) to anon, authenticated;
+grant execute on function public.get_check_in_cooldown(uuid) to anon, authenticated;

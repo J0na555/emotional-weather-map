@@ -15,7 +15,7 @@ import { ButtonLink } from '@/components/button-link'
 import { IntelligenceLive } from '@/components/intelligence/intelligence-live'
 
 export const metadata: Metadata = {
-  title: 'AI Emotional Intelligence — Emotional Weather Map',
+  title: 'Emotional Intelligence — Emotional Weather Map',
   description:
     'Daily emotional forecasts, burnout early-warnings, trend analysis, and gentle recommendations. A guide, never a surveillance system.',
 }
@@ -52,7 +52,7 @@ const principles = [
   {
     icon: Lock,
     title: 'Anonymous, always',
-    body: 'The AI only ever sees aggregate signals — never a single person.',
+    body: 'Forecasts only ever use aggregate signals — never a single person.',
   },
   {
     icon: Sparkles,
@@ -65,7 +65,7 @@ export default function IntelligencePage() {
   return (
     <main>
       <PageHero
-        label="AI emotional intelligence"
+        label="Emotional intelligence"
         title="A forecast for how we feel"
         description="Our intelligence reads the emotional climate the way meteorologists read the sky — finding patterns, predicting shifts, and offering gentle guidance. It is designed to help, not to watch."
       >
@@ -111,7 +111,7 @@ export default function IntelligencePage() {
       {/* principles */}
       <section className="mx-auto max-w-7xl px-5 py-20 sm:px-8">
         <div className="max-w-2xl">
-          <SectionLabel>How we think about AI</SectionLabel>
+          <SectionLabel>How we think about intelligence</SectionLabel>
           <h2 className="mt-5 text-balance font-serif text-4xl leading-tight tracking-tight text-foreground sm:text-5xl">
             Powerful, because it is trustworthy
           </h2>

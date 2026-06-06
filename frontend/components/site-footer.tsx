@@ -6,7 +6,7 @@ const groups = [
     links: [
       { href: '/map', label: 'Emotional Heatmap' },
       { href: '/check-in', label: 'Anonymous Check-in' },
-      { href: '/intelligence', label: 'AI Weather Forecast' },
+      { href: '/intelligence', label: 'Weather Forecast' },
     ],
   },
   {

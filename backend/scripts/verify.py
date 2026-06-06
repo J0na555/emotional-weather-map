@@ -98,6 +98,23 @@ def main() -> int:
         f"avg_stress={last_24h.get('avg_stress')},",
         f"trend_delta={trend.get('delta_pct')}%",
     )
+
+    try:
+        cooldown = client.rpc(
+            "get_check_in_cooldown",
+            {"p_client_token": "00000000-0000-0000-0000-000000000000"},
+        ).execute()
+        if cooldown.data is None:
+            print("get_check_in_cooldown RPC missing — run abuse-guard.sql")
+            return 1
+        print(f"OK — get_check_in_cooldown → {cooldown.data}s (fresh token)")
+    except Exception as exc:
+        err = str(exc)
+        if "get_check_in_cooldown" in err or "PGRST202" in err:
+            print("Abuse guard missing — run backend/supabase/abuse-guard.sql")
+            return 1
+        raise
+
     return 0
 
 

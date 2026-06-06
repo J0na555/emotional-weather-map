@@ -189,7 +189,7 @@ export function AddisMap({
           {summary && (
             <div className="absolute inset-x-4 bottom-4 z-[1000] mx-auto max-w-xl rounded-2xl border border-border/70 bg-background/90 p-4 shadow-lg backdrop-blur">
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                AI regional summary · {layerLabel}
+                Live regional summary · {layerLabel}
               </p>
               <p className="mt-1.5 text-pretty text-sm leading-relaxed text-foreground">
                 {summary}

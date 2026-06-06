@@ -227,7 +227,7 @@ export function MapExperience() {
               <div className="flex items-center gap-2">
                 <Sparkles className="size-4 text-primary" />
                 <p className="text-sm font-medium text-foreground">
-                  AI regional summary · {active.label}
+                  Live regional summary · {active.label}
                 </p>
               </div>
               <p className="mt-3 text-pretty text-sm leading-relaxed text-muted-foreground">

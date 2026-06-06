@@ -139,7 +139,7 @@ export function HomeFeatures() {
     },
     {
       icon: Brain,
-      title: 'AI emotional forecasts',
+      title: 'Emotional forecasts',
       body: 'Daily forecasts, burnout early-warnings, and gentle recommendations. A supportive guide, never a surveillance system.',
       href: '/intelligence',
       cta: 'See the forecast',

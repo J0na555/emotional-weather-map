@@ -10,7 +10,7 @@ import { ButtonLink } from '@/components/button-link'
 const links = [
   { href: '/map', label: 'Emotional Map' },
   { href: '/check-in', label: 'Check-in' },
-  { href: '/intelligence', label: 'AI Forecasts' },
+  { href: '/intelligence', label: 'Forecasts' },
   { href: '/solutions', label: 'Solutions' },
   { href: '/about', label: 'Vision' },
 ]
