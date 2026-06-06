@@ -52,6 +52,13 @@ const AREA_ALIASES: Record<string, BackendArea> = {
   kazanchis: 'kazanchis',
   lideta: 'lideta',
   mexico: 'lideta',
+  arada: 'lideta',
+  kirkos: 'kazanchis',
+  yeka: 'bole',
+  'nifas silk–lafto': 'lideta',
+  'nifas silk-lafto': 'lideta',
+  'kolfe keranio': 'lideta',
+  gullele: 'lideta',
   'addis ababa': 'lideta',
   addis: 'lideta',
   'my campus': 'lideta',
@@ -64,6 +71,13 @@ export const PLACE_TO_AREA: Partial<Record<string, BackendArea>> = {
   bole: 'bole',
   kazanchis: 'kazanchis',
   mexico: 'lideta',
+  lideta: 'lideta',
+  arada: 'lideta',
+  kirkos: 'kazanchis',
+  yeka: 'bole',
+  nifas_silk_lafto: 'lideta',
+  kolfe_keranio: 'lideta',
+  gullele: 'lideta',
 }
 
 export function mapFrontendEmotion(emotion: string): BackendEmotion {
@@ -72,7 +86,7 @@ export function mapFrontendEmotion(emotion: string): BackendEmotion {
 
 export function mapLocationToArea(location: string): BackendArea {
   const key = location.trim().toLowerCase()
-  if (!key) return 'lideta'
+  if (!key || key === 'prefer not to say') return 'lideta'
   return AREA_ALIASES[key] ?? 'lideta'
 }
 

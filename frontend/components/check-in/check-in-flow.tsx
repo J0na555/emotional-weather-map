@@ -169,6 +169,23 @@ export function CheckInFlow() {
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [similarCount, setSimilarCount] = useState<number | null>(null)
   const [submittedArea, setSubmittedArea] = useState<string>('Lideta')
+  const [isOpen, setIsOpen] = useState(false)
+  const autocompleteRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        autocompleteRef.current &&
+        !autocompleteRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   const total = 4
   const canNext = step !== 0 || emotion !== null
@@ -184,14 +201,33 @@ export function CheckInFlow() {
     setSubmitError(null)
     setSimilarCount(null)
     setSubmittedArea('Lideta')
+    setIsOpen(false)
   }
 
   async function handleSubmit() {
     if (!emotion) return
     const area = mapLocationToArea(location)
-    setSubmittedArea(areaLabel(area))
+    const displayLocation = (location === 'Prefer not to say' || !location) ? 'your community' : location
+    setSubmittedArea(displayLocation)
     setSubmitting(true)
     setSubmitError(null)
+
+    // Save to localStorage for map page use
+    try {
+      localStorage.setItem(
+        'last_checkin',
+        JSON.stringify({
+          location,
+          emotion,
+          stress,
+          energy,
+          sleep,
+          timestamp: Date.now(),
+        })
+      )
+    } catch (e) {
+      console.error('Failed to save check-in locally:', e)
+    }
 
     if (!isSupabaseConfigured()) {
       setSubmitting(false)
@@ -300,32 +336,78 @@ export function CheckInFlow() {
         )}
 
         {step === 2 && (
-          <div className="animate-rise">
+          <div className="animate-rise relative" ref={autocompleteRef}>
             <h2 className="font-serif text-3xl text-foreground">
               Add a location?
             </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Optional, and always anonymous. It helps map the emotional
-              climate of your area.
+            <p className="mt-2 text-sm text-muted-foreground mb-6">
+              Search or type a general area within Addis Ababa.
             </p>
-            <input
-              type="text"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="Neighbourhood, campus, or city"
-              className="mt-6 w-full rounded-2xl border border-border bg-background px-4 py-3.5 text-base text-foreground outline-none placeholder:text-muted-foreground focus:border-ring focus:ring-3 focus:ring-ring/30"
-            />
-            <div className="mt-4 flex flex-wrap gap-2">
-              {['Lideta', 'Bole', 'Kazanchis', 'Skip'].map((s) => (
-                <button
-                  key={s}
-                  onClick={() => setLocation(s === 'Skip' ? '' : s)}
-                  className="rounded-full border border-border/70 bg-secondary/50 px-3.5 py-1.5 text-sm text-foreground transition-colors hover:bg-secondary"
-                >
-                  {s}
-                </button>
-              ))}
+            <div className="relative">
+              <input
+                type="text"
+                value={location}
+                onChange={(e) => {
+                  setLocation(e.target.value)
+                  setIsOpen(true)
+                }}
+                onFocus={() => setIsOpen(true)}
+                placeholder="Type your area (e.g. Bole, Lideta...)"
+                className="w-full rounded-2xl border border-border bg-background px-4 py-3.5 text-base text-foreground outline-none placeholder:text-muted-foreground focus:border-ring focus:ring-3 focus:ring-ring/30"
+              />
+              {isOpen && (
+                <div className="absolute left-0 right-0 mt-2 z-10 rounded-2xl border border-border/70 bg-card p-2 shadow-lg max-h-[220px] overflow-y-auto">
+                  {(() => {
+                    const filtered = [
+                      'Bole',
+                      'Lideta',
+                      'Arada',
+                      'Kirkos',
+                      'Yeka',
+                      'Nifas Silk–Lafto',
+                      'Kolfe Keranio',
+                      'Gullele',
+                      'Prefer not to say',
+                    ].filter((loc) =>
+                      loc.toLowerCase().includes(location.toLowerCase())
+                    )
+                    
+                    if (filtered.length === 0) {
+                      return (
+                        <div className="p-3 text-sm text-muted-foreground text-center">
+                          No matching areas found
+                        </div>
+                      )
+                    }
+                    
+                    return filtered.map((loc) => {
+                      const isSelected = location.toLowerCase() === loc.toLowerCase()
+                      return (
+                        <button
+                          key={loc}
+                          onClick={() => {
+                            setLocation(loc)
+                            setIsOpen(false)
+                          }}
+                          className={cn(
+                            'w-full text-left rounded-xl px-4 py-2.5 text-sm transition-all cursor-pointer flex items-center justify-between',
+                            isSelected
+                              ? 'bg-primary/10 text-foreground font-semibold'
+                              : 'hover:bg-secondary/80 text-muted-foreground hover:text-foreground'
+                          )}
+                        >
+                          <span>{loc}</span>
+                          {isSelected && <span className="size-2 rounded-full bg-primary" />}
+                        </button>
+                      )
+                    })
+                  })()}
+                </div>
+              )}
             </div>
+            <p className="mt-6 text-xs text-muted-foreground text-center italic">
+              “We only collect your general area. Your exact location is never stored or displayed.”
+            </p>
           </div>
         )}
 

@@ -28,11 +28,13 @@ export function AddisMap({
   districts,
   summary,
   layerLabel,
+  layerColor,
   className,
 }: {
   districts: District[]
   summary?: string
   layerLabel?: string
+  layerColor?: string
   className?: string
 }) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -160,7 +162,10 @@ export function AddisMap({
       {/* top control bar */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-[1000] flex items-start justify-between gap-3 p-4">
         <div className="pointer-events-auto flex items-center gap-2 rounded-full border border-border/70 bg-background/85 px-3.5 py-2 text-xs font-medium text-foreground shadow-sm backdrop-blur">
-          <span className="size-2 animate-pulse rounded-full bg-primary" />
+          <span
+            className="size-2 animate-pulse rounded-full"
+            style={{ backgroundColor: layerColor ?? 'var(--color-primary)' }}
+          />
           Addis Ababa · {layerLabel ?? 'Mood'} layer
         </div>
         <button
