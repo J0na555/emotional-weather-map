@@ -1,4 +1,4 @@
--- Fix RLS insert/read for check_ins (paste in Supabase SQL Editor → Run)
+-- Fix RLS + grants for check_ins, views, and RPC (paste in Supabase SQL Editor → Run)
 
 grant usage on schema public to anon, authenticated;
 grant select, insert on public.check_ins to anon, authenticated;
@@ -21,3 +21,10 @@ create policy "authenticated insert check_ins"
 
 create policy "authenticated select check_ins"
   on public.check_ins for select to authenticated using (true);
+
+grant select on public.area_stats_24h to anon, authenticated;
+grant select on public.area_stats_7d to anon, authenticated;
+grant select on public.emotion_breakdown_24h to anon, authenticated;
+grant select on public.emotion_breakdown_7d to anon, authenticated;
+grant execute on function public.get_similar_feeling_count(text, text) to anon, authenticated;
+grant execute on function public.get_area_insights(text) to anon, authenticated;

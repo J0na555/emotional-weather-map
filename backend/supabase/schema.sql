@@ -4,6 +4,9 @@
 create table if not exists public.check_ins (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
+  area text not null default 'lideta' check (
+    area in ('lideta', 'bole', 'kazanchis')
+  ),
   emotion text not null check (
     emotion in (
       'stressed',
@@ -20,8 +23,28 @@ create table if not exists public.check_ins (
   sleep_quality int not null check (sleep_quality between 1 and 10)
 );
 
+-- Upgrade existing projects that created check_ins before area existed
+do $$
+begin
+  if not exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'check_ins'
+      and column_name = 'area'
+  ) then
+    alter table public.check_ins
+      add column area text not null default 'lideta';
+    alter table public.check_ins
+      add constraint check_ins_area_check
+      check (area in ('lideta', 'bole', 'kazanchis'));
+  end if;
+end $$;
+
 create index if not exists check_ins_created_at_idx
   on public.check_ins (created_at desc);
+
+create index if not exists check_ins_area_created_at_idx
+  on public.check_ins (area, created_at desc);
 
 -- Data API access (required for supabase-js from frontend)
 grant usage on schema public to anon, authenticated;

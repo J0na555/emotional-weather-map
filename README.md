@@ -11,8 +11,11 @@ Database lives in Supabase. SQL files are in `backend/supabase/`.
 1. Create a project at [supabase.com](https://supabase.com)
 2. Open **SQL Editor → New query**
 3. Paste and run `backend/supabase/schema.sql`
-4. Paste and run `backend/supabase/seed.sql`
-5. Copy **Project URL** + **anon key** from **Settings → API**
+4. Paste and run `backend/supabase/aggregates.sql`
+5. Paste and run `backend/supabase/seed.sql`
+
+   Or run `backend/supabase/setup.sql` once (all three combined).
+6. Copy **Project URL** + **anon key** from **Settings → API**
 
 ### Verify locally (optional)
 
@@ -32,9 +35,11 @@ See `backend/HANDOFF.md` for table shape, Supabase queries, and Lideta map const
 ```
 backend/
   supabase/
-    schema.sql   # table + RLS + grants
-    seed.sql     # demo data (~25 rows)
-  HANDOFF.md     # frontend contract
+    schema.sql      # table + area column + RLS + grants
+    aggregates.sql  # views + RPC for area insights
+    seed.sql        # demo data (~75 rows, stress-skewed)
+    setup.sql       # schema + aggregates + seed (one paste)
+  HANDOFF.md        # frontend contract
   scripts/
-    verify.py    # connection smoke test
+    verify.py       # connection + aggregate smoke test
 ```

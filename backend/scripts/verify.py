@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Quick check that Supabase is reachable and check_ins works."""
+"""Quick check that Supabase is reachable and check_ins + aggregates work."""
 
 import os
 import sys
@@ -42,17 +42,62 @@ def main() -> int:
     count = result.count if result.count is not None else len(result.data or [])
     print(f"OK — check_ins reachable ({count} row(s) in sample query)")
 
-    insert = client.table("check_ins").insert({
+    insert_payload = {
         "emotion": "calm",
         "stress_level": 3,
         "energy_level": 7,
         "sleep_quality": 8,
-    }).execute()
+    }
+    try:
+        insert = client.table("check_ins").insert({
+            **insert_payload,
+            "area": "lideta",
+        }).execute()
+    except Exception as exc:
+        err = str(exc)
+        if "area" in err and "schema cache" in err:
+            print("Schema not migrated — run backend/supabase/schema.sql in Supabase SQL Editor.")
+            return 1
+        raise
+
     if not insert.data:
         print("Insert test failed:", insert)
         return 1
 
     print(f"OK — insert test passed (id={insert.data[0]['id']})")
+
+    try:
+        stats = client.table("area_stats_24h").select("*").eq("area", "lideta").execute()
+    except Exception:
+        print("Aggregates missing — run backend/supabase/aggregates.sql in Supabase SQL Editor.")
+        return 1
+    if stats.data is None:
+        print("area_stats_24h view missing — run backend/supabase/aggregates.sql")
+        return 1
+    print(f"OK — area_stats_24h view ({len(stats.data)} area row(s))")
+
+    similar = client.rpc(
+        "get_similar_feeling_count",
+        {"p_area": "lideta", "p_emotion": "stressed"},
+    ).execute()
+    if similar.data is None:
+        print("get_similar_feeling_count RPC missing — run aggregates.sql")
+        return 1
+    print(f"OK — get_similar_feeling_count → {similar.data}")
+
+    insights = client.rpc("get_area_insights", {"p_area": "lideta"}).execute()
+    if not insights.data:
+        print("get_area_insights RPC missing or empty — run aggregates.sql + seed.sql")
+        return 1
+
+    last_24h = insights.data.get("last_24h") or {}
+    trend = insights.data.get("trend") or {}
+    print(
+        "OK — get_area_insights:",
+        f"24h count={last_24h.get('check_in_count')},",
+        f"avg_stress={last_24h.get('avg_stress')},",
+        f"trend_delta={trend.get('delta_pct')}%",
+    )
     return 0
 
 
