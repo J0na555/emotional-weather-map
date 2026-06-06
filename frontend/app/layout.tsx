@@ -1,11 +1,15 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata } from 'next'
-import { Instrument_Serif, Geist } from 'next/font/google'
+import { Instrument_Serif, Albert_Sans } from 'next/font/google'
 import './globals.css'
 import { SiteNav } from '@/components/site-nav'
 import { SiteFooter } from '@/components/site-footer'
 
-const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
+const albertSans = Albert_Sans({
+  variable: '--font-sans',
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+})
 const instrumentSerif = Instrument_Serif({
   variable: '--font-serif',
   subsets: ['latin'],
@@ -20,7 +24,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport = {
-  themeColor: '#f3f0e9',
+  themeColor: '#FAF5F2',
 }
 
 export default function RootLayout({
@@ -31,7 +35,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${instrumentSerif.variable} bg-background`}
+      className={`${albertSans.variable} ${instrumentSerif.variable} bg-background`}
     >
       <body className="font-sans antialiased">
         <SiteNav />

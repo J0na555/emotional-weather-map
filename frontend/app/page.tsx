@@ -3,6 +3,7 @@ import {
   HomeStats,
   HomeProblem,
   HomeFeatures,
+  HomeReflections,
   HomeUseCases,
   HomeCTA,
 } from '@/components/home/home-sections'
@@ -14,6 +15,7 @@ export default function Page() {
       <HomeStats />
       <HomeProblem />
       <HomeFeatures />
+      <HomeReflections />
       <HomeUseCases />
       <HomeCTA />
     </main>
