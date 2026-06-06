@@ -1,4 +1,19 @@
+import {
+  CHECK_IN_COOLDOWN_SECONDS,
+  getCheckInToken,
+  recordCheckInTime,
+} from '@/lib/check-in-token'
 import { getSupabase } from '@/lib/supabase'
+
+export class CheckInCooldownError extends Error {
+  secondsRemaining: number
+
+  constructor(secondsRemaining: number) {
+    super('CHECK_IN_COOLDOWN')
+    this.name = 'CheckInCooldownError'
+    this.secondsRemaining = secondsRemaining
+  }
+}
 
 export type BackendArea = 'lideta' | 'bole' | 'kazanchis'
 export type BackendEmotion =
@@ -103,6 +118,21 @@ export function areaLabel(area: BackendArea): string {
   return labels[area]
 }
 
+export async function fetchCheckInCooldown(): Promise<number> {
+  const supabase = getSupabase()
+  if (!supabase) return 0
+
+  const token = getCheckInToken()
+  if (!token) return 0
+
+  const { data, error } = await supabase.rpc('get_check_in_cooldown', {
+    p_client_token: token,
+  })
+
+  if (error) throw error
+  return typeof data === 'number' ? data : 0
+}
+
 export async function submitCheckIn(payload: {
   area: BackendArea
   emotion: string
@@ -113,6 +143,7 @@ export async function submitCheckIn(payload: {
   const supabase = getSupabase()
   if (!supabase) throw new Error('Supabase is not configured')
 
+  const clientToken = getCheckInToken()
   const { data, error } = await supabase
     .from('check_ins')
     .insert({
@@ -121,11 +152,21 @@ export async function submitCheckIn(payload: {
       stress_level: sliderToLevel(payload.stress),
       energy_level: sliderToLevel(payload.energy),
       sleep_quality: sliderToLevel(payload.sleep),
+      client_token: clientToken || null,
     })
     .select('id')
     .single()
 
-  if (error) throw error
+  if (error) {
+    const message = `${error.message ?? ''} ${error.details ?? ''} ${error.hint ?? ''}`
+    if (message.includes('CHECK_IN_COOLDOWN')) {
+      const seconds = await fetchCheckInCooldown().catch(() => CHECK_IN_COOLDOWN_SECONDS)
+      throw new CheckInCooldownError(seconds)
+    }
+    throw error
+  }
+
+  recordCheckInTime()
   return data
 }
 

@@ -18,6 +18,7 @@ From **Project Settings → API**:
 | `stress_level` | int | 1–10 |
 | `energy_level` | int | 1–10 |
 | `sleep_quality` | int | 1–10 |
+| `client_token` | uuid | optional — anonymous browser token for 1-hour check-in cooldown |
 
 **Allowed emotions:** `stressed`, `calm`, `anxious`, `energized`, `lonely`, `burned_out`, `motivated`
 
@@ -52,14 +53,30 @@ Prefer **RPC/views** for dashboards — do not scan all rows for stats.
 
 ### Submit check-in
 
+Include a random `client_token` (stored in `localStorage`) so the abuse guard can limit one check-in per hour per browser.
+
 ```ts
+const clientToken = crypto.randomUUID() // persist in localStorage after first visit
+
 const { error } = await supabase.from('check_ins').insert({
   area: 'lideta', // optional — defaults to lideta in DB
   emotion: 'stressed',
   stress_level: 8,
   energy_level: 3,
   sleep_quality: 4,
+  client_token: clientToken,
 });
+```
+
+If the same `client_token` checks in again within one hour, Postgres raises `CHECK_IN_COOLDOWN`.
+
+### Check-in cooldown (before submit)
+
+```ts
+const { data: seconds } = await supabase.rpc('get_check_in_cooldown', {
+  p_client_token: clientToken,
+});
+// 0 = allowed; otherwise seconds until next check-in
 ```
 
 ### Load all check-ins (heatmap markers)
@@ -72,7 +89,7 @@ const { data, error } = await supabase
   .order('created_at', { ascending: false });
 ```
 
-### Area insights (map color, charts, AI input)
+### Area insights (map color, charts, forecast copy)
 
 One payload with 24h/7d stats, emotion breakdown, and trend:
 
@@ -168,21 +185,22 @@ const { data } = await supabase
   .order('created_at', { ascending: false });
 ```
 
-## AI forecast (Phase 2 — not in backend yet)
+## Forecast copy (from aggregates)
 
-Person 3 / frontend: call OpenAI with `get_area_insights` payload, or use static copy:
+Frontend uses `forecastCopy()` in `lib/emotional-data.ts` with `get_area_insights` data:
 
-- avg stress > 7: "Lideta is running hot today — stress is elevated across the area."
-- avg stress 5–7: "Moderate emotional strain in Lideta this afternoon."
-- avg stress < 5: "Lideta feels relatively calm right now."
+- avg stress > 7: "Addis is running hot today — stress is elevated across the area."
+- avg stress 5–7: "Moderate emotional strain across Addis this afternoon."
+- avg stress < 5: "Addis feels relatively calm right now."
 
 ## SQL setup order
 
 1. `backend/supabase/schema.sql`
 2. `backend/supabase/aggregates.sql`
-3. `backend/supabase/seed.sql`
+3. `backend/supabase/abuse-guard.sql`
+4. `backend/supabase/seed.sql`
 
-Or paste `backend/supabase/setup.sql` (all three combined).
+Or paste `backend/supabase/setup.sql` (schema + aggregates + seed + abuse guard combined).
 
 ## Troubleshooting
 
@@ -193,3 +211,5 @@ Or paste `backend/supabase/setup.sql` (all three combined).
 | insert fails on emotion | Use one of the 7 allowed emotion strings exactly |
 | RPC not found | Run `aggregates.sql` in Supabase SQL Editor |
 | missing `area` column | Re-run `schema.sql` (includes upgrade for existing tables) |
+| `CHECK_IN_COOLDOWN` on insert | Expected — same browser checked in within the last hour |
+| `get_check_in_cooldown` not found | Run `abuse-guard.sql` in Supabase SQL Editor |

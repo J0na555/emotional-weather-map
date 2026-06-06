@@ -7,7 +7,14 @@ import { Button } from '@/components/ui/button'
 import { ButtonLink } from '@/components/button-link'
 import { EMOTION_COLORS } from '@/components/emotion-map'
 import {
+  formatCooldown,
+  getCheckInToken,
+  localCooldownSeconds,
+} from '@/lib/check-in-token'
+import {
   areaLabel,
+  CheckInCooldownError,
+  fetchCheckInCooldown,
   fetchSimilarCount,
   mapLocationToArea,
   submitCheckIn,
@@ -171,6 +178,7 @@ export function CheckInFlow() {
   const [submittedArea, setSubmittedArea] = useState<string>('Lideta')
   const [isOpen, setIsOpen] = useState(false)
   const autocompleteRef = useRef<HTMLDivElement>(null)
+  const [cooldownSeconds, setCooldownSeconds] = useState(0)
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -189,6 +197,41 @@ export function CheckInFlow() {
 
   const total = 4
   const canNext = step !== 0 || emotion !== null
+  const onCooldown = cooldownSeconds > 0
+
+  useEffect(() => {
+    if (!isSupabaseConfigured()) return
+
+    let cancelled = false
+
+    async function refreshCooldown() {
+      const local = localCooldownSeconds()
+      let server = 0
+      if (getCheckInToken()) {
+        try {
+          server = await fetchCheckInCooldown()
+        } catch {
+          server = local
+        }
+      }
+      if (!cancelled) setCooldownSeconds(Math.max(local, server))
+    }
+
+    refreshCooldown()
+    const id = setInterval(refreshCooldown, 30_000)
+    return () => {
+      cancelled = true
+      clearInterval(id)
+    }
+  }, [step])
+
+  useEffect(() => {
+    if (cooldownSeconds <= 0) return
+    const id = setInterval(() => {
+      setCooldownSeconds((s) => Math.max(0, s - 1))
+    }, 1000)
+    return () => clearInterval(id)
+  }, [cooldownSeconds > 0])
 
   function reset() {
     setStep(0)
@@ -239,8 +282,16 @@ export function CheckInFlow() {
       await submitCheckIn({ area, emotion, stress, energy, sleep })
       const count = await fetchSimilarCount(area, emotion)
       setSimilarCount(count)
+      setCooldownSeconds(60 * 60)
       setStep(4)
-    } catch {
+    } catch (err) {
+      if (err instanceof CheckInCooldownError) {
+        setCooldownSeconds(err.secondsRemaining)
+        setSubmitError(
+          `You can check in again in ${formatCooldown(err.secondsRemaining)}.`,
+        )
+        return
+      }
       setSubmitError('Could not save your check-in. Please try again.')
     } finally {
       setSubmitting(false)
@@ -249,6 +300,16 @@ export function CheckInFlow() {
 
   return (
     <div className="mx-auto w-full max-w-xl">
+      {onCooldown && step < 4 && (
+        <div className="mb-4 rounded-2xl border border-border/70 bg-secondary/50 px-4 py-3 text-sm text-muted-foreground">
+          You checked in recently. You can share again in{' '}
+          <span className="font-medium text-foreground">
+            {formatCooldown(cooldownSeconds)}
+          </span>
+          .
+        </div>
+      )}
+
       {/* progress */}
       {step < total && (
         <div className="mb-8 flex items-center gap-2">
@@ -446,10 +507,14 @@ export function CheckInFlow() {
             <Button
               size="lg"
               onClick={handleSubmit}
-              disabled={submitting}
+              disabled={submitting || onCooldown}
               className="mt-8 w-full rounded-full text-base"
             >
-              {submitting ? 'Saving…' : 'Submit check-in'}
+              {submitting
+                ? 'Saving…'
+                : onCooldown
+                  ? `Available in ${formatCooldown(cooldownSeconds)}`
+                  : 'Submit check-in'}
               <Check className="size-4" />
             </Button>
           </div>
@@ -491,10 +556,13 @@ export function CheckInFlow() {
               <Button
                 variant="outline"
                 onClick={reset}
+                disabled={onCooldown}
                 className="flex-1 rounded-full border-border bg-card"
               >
                 <RotateCcw className="size-4" />
-                Check in again
+                {onCooldown
+                  ? `Again in ${formatCooldown(cooldownSeconds)}`
+                  : 'Check in again'}
               </Button>
               <ButtonLink href="/map" className="flex-1 rounded-full">
                 See your city&apos;s map

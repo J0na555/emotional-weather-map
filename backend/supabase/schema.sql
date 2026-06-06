@@ -38,6 +38,16 @@ begin
       add constraint check_ins_area_check
       check (area in ('lideta', 'bole', 'kazanchis'));
   end if;
+
+  if not exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'check_ins'
+      and column_name = 'client_token'
+  ) then
+    alter table public.check_ins
+      add column client_token uuid;
+  end if;
 end $$;
 
 create index if not exists check_ins_created_at_idx
