@@ -1,4 +1,9 @@
 .env
+.env.local
+frontend/.env.local
+node_modules/
+frontend/.next/
+.pnpm-store/
 __pycache__/
 *.pyc
 .venv/

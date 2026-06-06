@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { ArrowRight, Sparkles } from 'lucide-react'
 import { ButtonLink } from '@/components/button-link'
 import { EmotionMap, EMOTION_COLORS } from '@/components/emotion-map'
+import { LivePulse } from '@/components/home/live-pulse'
 
 const cities = ['Addis', 'your campus', 'your city', 'your team', 'Adama']
 
@@ -72,16 +73,7 @@ export function HomeHero() {
 
         <div className="relative animate-float">
           <EmotionMap />
-          <div className="absolute -bottom-5 left-5 right-5 rounded-2xl border border-border/70 bg-background/90 p-4 shadow-lg backdrop-blur sm:left-auto sm:right-6 sm:w-64">
-            <p className="text-xs text-muted-foreground">Live emotional pulse</p>
-            <p className="mt-1 font-serif text-2xl text-foreground">
-              Calm &amp; hopeful
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              City wellbeing score{' '}
-              <span className="font-medium text-foreground">72 / 100</span> · rising
-            </p>
-          </div>
+          <LivePulse />
         </div>
       </div>
     </section>

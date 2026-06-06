@@ -6,6 +6,13 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { ButtonLink } from '@/components/button-link'
 import { EMOTION_COLORS } from '@/components/emotion-map'
+import {
+  areaLabel,
+  fetchSimilarCount,
+  mapLocationToArea,
+  submitCheckIn,
+} from '@/lib/emotional-data'
+import { isSupabaseConfigured } from '@/lib/supabase'
 
 const EMOTIONS = [
   { key: 'calm', label: 'Calm', color: EMOTION_COLORS.calm },
@@ -158,6 +165,10 @@ export function CheckInFlow() {
   const [energy, setEnergy] = useState(60)
   const [sleep, setSleep] = useState(55)
   const [location, setLocation] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [similarCount, setSimilarCount] = useState<number | null>(null)
+  const [submittedArea, setSubmittedArea] = useState<string>('Lideta')
 
   const total = 4
   const canNext = step !== 0 || emotion !== null
@@ -169,6 +180,35 @@ export function CheckInFlow() {
     setEnergy(60)
     setSleep(55)
     setLocation('')
+    setSubmitting(false)
+    setSubmitError(null)
+    setSimilarCount(null)
+    setSubmittedArea('Lideta')
+  }
+
+  async function handleSubmit() {
+    if (!emotion) return
+    const area = mapLocationToArea(location)
+    setSubmittedArea(areaLabel(area))
+    setSubmitting(true)
+    setSubmitError(null)
+
+    if (!isSupabaseConfigured()) {
+      setSubmitting(false)
+      setStep(4)
+      return
+    }
+
+    try {
+      await submitCheckIn({ area, emotion, stress, energy, sleep })
+      const count = await fetchSimilarCount(area, emotion)
+      setSimilarCount(count)
+      setStep(4)
+    } catch {
+      setSubmitError('Could not save your check-in. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -276,7 +316,7 @@ export function CheckInFlow() {
               className="mt-6 w-full rounded-2xl border border-border bg-background px-4 py-3.5 text-base text-foreground outline-none placeholder:text-muted-foreground focus:border-ring focus:ring-3 focus:ring-ring/30"
             />
             <div className="mt-4 flex flex-wrap gap-2">
-              {['Addis Ababa', 'Bole', 'My campus', 'Skip'].map((s) => (
+              {['Lideta', 'Bole', 'Kazanchis', 'Skip'].map((s) => (
                 <button
                   key={s}
                   onClick={() => setLocation(s === 'Skip' ? '' : s)}
@@ -316,12 +356,18 @@ export function CheckInFlow() {
                 </span>
               )}
             </div>
+            {submitError && (
+              <p className="mt-4 text-sm text-[oklch(0.64_0.19_25)]">
+                {submitError}
+              </p>
+            )}
             <Button
               size="lg"
-              onClick={() => setStep(4)}
+              onClick={handleSubmit}
+              disabled={submitting}
               className="mt-8 w-full rounded-full text-base"
             >
-              Submit check-in
+              {submitting ? 'Saving…' : 'Submit check-in'}
               <Check className="size-4" />
             </Button>
           </div>
@@ -346,8 +392,17 @@ export function CheckInFlow() {
             </div>
             <div className="mt-6 rounded-2xl border border-border/70 bg-secondary/40 p-5 text-center">
               <p className="text-pretty text-sm leading-relaxed text-foreground">
-                &ldquo;You are not the only one feeling this. Right now, 1,240
-                people near you checked in feeling calmer than yesterday.&rdquo;
+                {similarCount != null && similarCount > 0 ? (
+                  <>
+                    &ldquo;You&apos;re not alone. {similarCount} people in{' '}
+                    {submittedArea} felt similarly in the last 24 hours.&rdquo;
+                  </>
+                ) : (
+                  <>
+                    &ldquo;Your check-in is part of {submittedArea}&apos;s
+                    emotional weather. Thank you for adding your voice.&rdquo;
+                  </>
+                )}
               </p>
             </div>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
