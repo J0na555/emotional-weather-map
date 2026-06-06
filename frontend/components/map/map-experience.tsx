@@ -77,7 +77,7 @@ const LAYER_KIND: Record<LayerKey, 'pos' | 'neg'> = {
   sleep: 'pos',
 }
 
-const LAYER_COLORS: Record<
+export const LAYER_COLORS: Record<
   LayerKey,
   {
     base: string
@@ -169,7 +169,7 @@ function state(score: number, kind: 'pos' | 'neg') {
   return { state: 'Tense' }
 }
 
-function buildDistricts(
+export function buildDistricts(
   layer: LayerKey,
   byArea: Partial<Record<string, AreaInsights>>,
   cityInsights: AreaInsights | null,

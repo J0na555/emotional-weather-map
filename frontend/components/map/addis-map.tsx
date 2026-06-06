@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Maximize2, Minimize2, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { EMOTION_COLORS } from '@/components/emotion-map'
@@ -43,6 +44,20 @@ export function AddisMap({
   const layerGroupRef = useRef<import('leaflet').LayerGroup | null>(null)
   const [fullscreen, setFullscreen] = useState(false)
   const [ready, setReady] = useState(false)
+  const [portalReady, setPortalReady] = useState(false)
+
+  useEffect(() => {
+    setPortalReady(true)
+  }, [])
+
+  useEffect(() => {
+    if (!fullscreen) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = prev
+    }
+  }, [fullscreen])
 
   // Initialize Leaflet map once.
   useEffect(() => {
@@ -148,18 +163,17 @@ export function AddisMap({
     return () => window.removeEventListener('keydown', onKey)
   }, [fullscreen])
 
-  return (
+  const mapShell = (
     <div
       className={cn(
         fullscreen
-          ? 'fixed inset-0 z-50 bg-background'
+          ? 'relative size-full min-h-0'
           : 'relative aspect-[16/11] w-full overflow-hidden rounded-3xl border border-border/70',
-        className,
+        !fullscreen && className,
       )}
     >
       <div ref={containerRef} className="size-full" />
 
-      {/* top control bar */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-[1000] flex items-start justify-between gap-3 p-4">
         <div className="pointer-events-auto flex items-center gap-2 rounded-full border border-border/70 bg-background/85 px-3.5 py-2 text-xs font-medium text-foreground shadow-sm backdrop-blur">
           <span
@@ -169,6 +183,7 @@ export function AddisMap({
           Addis Ababa · {layerLabel ?? 'Mood'} layer
         </div>
         <button
+          type="button"
           onClick={() => setFullscreen((v) => !v)}
           aria-label={fullscreen ? 'Exit full screen' : 'Open full screen'}
           className="pointer-events-auto flex size-9 items-center justify-center rounded-full border border-border/70 bg-background/85 text-foreground shadow-sm backdrop-blur transition-colors hover:bg-secondary"
@@ -181,10 +196,10 @@ export function AddisMap({
         </button>
       </div>
 
-      {/* fullscreen summary + close */}
       {fullscreen && (
         <>
           <button
+            type="button"
             onClick={() => setFullscreen(false)}
             aria-label="Close full screen"
             className="absolute right-4 top-16 z-[1000] flex size-9 items-center justify-center rounded-full border border-border/70 bg-background/85 text-foreground shadow-sm backdrop-blur transition-colors hover:bg-secondary"
@@ -205,6 +220,30 @@ export function AddisMap({
       )}
     </div>
   )
+
+  if (fullscreen && portalReady) {
+    return (
+      <>
+        {createPortal(
+          <div className="fixed inset-0 z-[200] bg-background">{mapShell}</div>,
+          document.body,
+        )}
+        <div
+          className={cn(
+            'invisible aspect-[16/11] w-full',
+            className,
+          )}
+          aria-hidden
+        />
+      </>
+    )
+  }
+
+  if (fullscreen) {
+    return null
+  }
+
+  return mapShell
 }
 
 export { colorWithState }

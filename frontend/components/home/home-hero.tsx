@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react'
 import { ArrowRight, Sparkles } from 'lucide-react'
 import { ButtonLink } from '@/components/button-link'
-import { EmotionMap, EMOTION_COLORS } from '@/components/emotion-map'
-import { LivePulse } from '@/components/home/live-pulse'
+import { EMOTION_COLORS } from '@/components/emotion-map'
+import { HomeMapPreview } from '@/components/home/home-map-preview'
 
 const cities = ['Addis Ababa', 'your campus', 'your city', 'your organization', 'Adama']
 
@@ -16,12 +16,14 @@ export function HomeHero() {
   }, [])
 
   return (
-    <section className="relative min-h-[90svh] lg:min-h-screen w-full flex items-center justify-center overflow-hidden bg-[#2D1A12]">
+    <section className="relative min-h-[90svh] lg:min-h-screen w-full flex items-center justify-center bg-[#2D1A12]">
       {/* Background Image with elegant overlay gradient */}
+      <div className="absolute inset-0 overflow-hidden">
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[10000ms] scale-105"
         style={{ backgroundImage: `url('/images/home_hero_bg.png')` }}
       />
+      </div>
       <div className="absolute inset-0 bg-gradient-to-tr from-[#2D1A12]/95 via-[#2D1A12]/80 to-[#2D1A12]/45" />
 
       {/* Hero Content Grid */}
@@ -84,22 +86,10 @@ export function HomeHero() {
           </div>
         </div>
 
-        {/* Right side interactive glass map preview */}
+        {/* Right side — live Addis map (same engine as /map) */}
         <div className="relative flex flex-col justify-center animate-float">
-          <div className="overflow-hidden rounded-3xl border border-white/15 bg-white/5 p-4 shadow-2xl backdrop-blur-md">
-            <EmotionMap />
-          </div>
-          
-          <div className="absolute -bottom-6 left-6 right-6 rounded-2xl border border-foreground/10 bg-background/95 p-5 shadow-xl backdrop-blur sm:left-auto sm:right-8 sm:w-72">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Live community pulse</p>
-            <p className="mt-1 font-serif text-2xl font-normal text-foreground">
-              Calm &amp; hopeful
-            </p>
-            <div className="h-px bg-foreground/10 my-3" />
-            <p className="text-xs leading-relaxed text-muted-foreground">
-              Community wellbeing score{' '}
-              <span className="font-semibold text-foreground">72 / 100</span> · rising
-            </p>
+          <div className="rounded-3xl border border-white/15 bg-white/5 p-2 shadow-2xl backdrop-blur-md">
+            <HomeMapPreview />
           </div>
         </div>
       </div>
