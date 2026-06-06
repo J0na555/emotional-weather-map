@@ -5,8 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-heading: var(--font-sans);
-  --font-sans: var(--font-geist-sans), 'Geist Fallback';
+  --font-heading: var(--font-serif);
+  --font-sans: var(--font-sans), sans-serif;
   --font-serif: var(--font-serif), Georgia, serif;
   --font-mono: var(--font-geist-mono), 'Geist Mono Fallback';
   --color-sidebar-ring: var(--sidebar-ring);
@@ -50,74 +50,77 @@
 }
 
 :root {
-  /* Calm Futurism — warm, light, hopeful */
-  --background: oklch(0.985 0.008 95);
-  --foreground: oklch(0.245 0.02 260);
-  --card: oklch(0.997 0.004 95);
-  --card-foreground: oklch(0.245 0.02 260);
-  --popover: oklch(0.997 0.004 95);
-  --popover-foreground: oklch(0.245 0.02 260);
-  --primary: oklch(0.58 0.11 215);
-  --primary-foreground: oklch(0.99 0.005 230);
-  --secondary: oklch(0.95 0.012 95);
-  --secondary-foreground: oklch(0.3 0.02 260);
-  --muted: oklch(0.955 0.01 95);
-  --muted-foreground: oklch(0.52 0.018 260);
-  --accent: oklch(0.84 0.09 60);
-  --accent-foreground: oklch(0.28 0.04 60);
-  --destructive: oklch(0.62 0.18 25);
-  --border: oklch(0.9 0.012 90);
-  --input: oklch(0.9 0.012 90);
-  --ring: oklch(0.58 0.11 215);
-  /* Emotional spectrum */
-  --chart-1: oklch(0.62 0.12 200); /* calm blue */
-  --chart-2: oklch(0.7 0.13 160); /* energy green */
-  --chart-3: oklch(0.82 0.13 90); /* warm yellow */
-  --chart-4: oklch(0.74 0.15 50); /* amber */
-  --chart-5: oklch(0.64 0.18 25); /* stress coral */
-  --radius: 1rem;
-  --sidebar: oklch(0.985 0.008 95);
-  --sidebar-foreground: oklch(0.245 0.02 260);
-  --sidebar-primary: oklch(0.58 0.11 215);
-  --sidebar-primary-foreground: oklch(0.99 0.005 230);
-  --sidebar-accent: oklch(0.95 0.012 95);
-  --sidebar-accent-foreground: oklch(0.3 0.02 260);
-  --sidebar-border: oklch(0.9 0.012 90);
-  --sidebar-ring: oklch(0.58 0.11 215);
+  /* Warm editorial sand & espresso palette - inspired by Core Atelier */
+  --background: oklch(0.975 0.015 45); /* warm light rose-cream #FAF5F2 */
+  --foreground: oklch(0.20 0.03 45); /* dark espresso brown #2D1A12 */
+  --card: oklch(0.96 0.02 45); /* warm sand card #F4ECE7 */
+  --card-foreground: oklch(0.20 0.03 45);
+  --popover: oklch(0.975 0.015 45);
+  --popover-foreground: oklch(0.20 0.03 45);
+  --primary: oklch(0.20 0.03 45); /* deep espresso brown primary */
+  --primary-foreground: oklch(0.975 0.015 45);
+  --secondary: oklch(0.94 0.025 45); /* beige-rose #EFE4DC */
+  --secondary-foreground: oklch(0.20 0.03 45);
+  --muted: oklch(0.94 0.02 45);
+  --muted-foreground: oklch(0.55 0.04 45); /* warm clay-grey #A38C80 */
+  --accent: oklch(0.92 0.03 45);
+  --accent-foreground: oklch(0.20 0.03 45);
+  --destructive: oklch(0.62 0.15 25);
+  --border: oklch(0.20 0.03 45 / 15%); /* thin espresso line */
+  --input: oklch(0.20 0.03 45 / 15%);
+  --ring: oklch(0.20 0.03 45);
+
+  /* Emotional spectrum - tuned to fit the warm palette */
+  --chart-1: oklch(0.65 0.09 230); /* peaceful soft blue */
+  --chart-2: oklch(0.72 0.09 140); /* quiet sage green */
+  --chart-3: oklch(0.83 0.09 80); /* warm soft amber/ochre */
+  --chart-4: oklch(0.74 0.12 50); /* rich terracotta */
+  --chart-5: oklch(0.62 0.14 30); /* deep clay coral */
+
+  --radius: 2rem; /* Core Atelier has heavily rounded shapes */
+  --sidebar: oklch(0.975 0.015 45);
+  --sidebar-foreground: oklch(0.20 0.03 45);
+  --sidebar-primary: oklch(0.20 0.03 45);
+  --sidebar-primary-foreground: oklch(0.975 0.015 45);
+  --sidebar-accent: oklch(0.94 0.025 45);
+  --sidebar-accent-foreground: oklch(0.20 0.03 45);
+  --sidebar-border: oklch(0.20 0.03 45 / 15%);
+  --sidebar-ring: oklch(0.20 0.03 45);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* Bespoke dark mode - deep dark chocolate instead of pitch black */
+  --background: oklch(0.12 0.02 45); /* rich espresso-black #1B100B */
+  --foreground: oklch(0.94 0.02 45); /* warm off-white */
+  --card: oklch(0.16 0.02 45); /* dark chocolate card #241712 */
+  --card-foreground: oklch(0.94 0.02 45);
+  --popover: oklch(0.16 0.02 45);
+  --popover-foreground: oklch(0.94 0.02 45);
+  --primary: oklch(0.94 0.02 45);
+  --primary-foreground: oklch(0.12 0.02 45);
+  --secondary: oklch(0.20 0.02 45);
+  --secondary-foreground: oklch(0.94 0.02 45);
+  --muted: oklch(0.20 0.02 45);
+  --muted-foreground: oklch(0.65 0.03 45);
+  --accent: oklch(0.20 0.02 45);
+  --accent-foreground: oklch(0.94 0.02 45);
+  --destructive: oklch(0.60 0.15 25);
+  --border: oklch(0.94 0.02 45 / 12%);
+  --input: oklch(0.94 0.02 45 / 12%);
+  --ring: oklch(0.94 0.02 45);
+  --chart-1: oklch(0.75 0.06 230);
+  --chart-2: oklch(0.80 0.06 140);
+  --chart-3: oklch(0.88 0.06 80);
+  --chart-4: oklch(0.82 0.08 50);
+  --chart-5: oklch(0.72 0.09 30);
+  --sidebar: oklch(0.16 0.02 45);
+  --sidebar-foreground: oklch(0.94 0.02 45);
+  --sidebar-primary: oklch(0.94 0.02 45);
+  --sidebar-primary-foreground: oklch(0.12 0.02 45);
+  --sidebar-accent: oklch(0.20 0.02 45);
+  --sidebar-accent-foreground: oklch(0.94 0.02 45);
+  --sidebar-border: oklch(0.94 0.02 45 / 12%);
+  --sidebar-ring: oklch(0.94 0.02 45);
 }
 
 @layer base {
