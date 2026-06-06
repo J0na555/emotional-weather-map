@@ -43,3 +43,17 @@ create policy "anon select check_ins"
   for select
   to anon
   using (true);
+
+drop policy if exists "authenticated insert check_ins" on public.check_ins;
+create policy "authenticated insert check_ins"
+  on public.check_ins
+  for insert
+  to authenticated
+  with check (true);
+
+drop policy if exists "authenticated select check_ins" on public.check_ins;
+create policy "authenticated select check_ins"
+  on public.check_ins
+  for select
+  to authenticated
+  using (true);

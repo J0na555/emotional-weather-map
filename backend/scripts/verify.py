@@ -18,10 +18,22 @@ except ImportError:
 
 def main() -> int:
     load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
-    url = os.environ.get("SUPABASE_URL")
-    key = os.environ.get("SUPABASE_ANON_KEY")
+    url = (os.environ.get("SUPABASE_URL") or "").strip()
+    key = (os.environ.get("SUPABASE_ANON_KEY") or "").strip()
     if not url or not key:
         print("Copy backend/.env.example to backend/.env and fill in credentials.")
+        return 1
+
+    if url.startswith("sb_publishable_") or url.startswith("eyJ"):
+        print("SUPABASE_URL looks like an API key, not a URL.")
+        print("Fix backend/.env:")
+        print("  SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co")
+        print("  SUPABASE_ANON_KEY=sb_publishable_... (or legacy anon key)")
+        return 1
+
+    if not url.startswith("https://") or ".supabase.co" not in url:
+        print("SUPABASE_URL must look like: https://abcdefghijklmnop.supabase.co")
+        print(f"Got: {url[:60]}...")
         return 1
 
     client = create_client(url, key)
