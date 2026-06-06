@@ -46,8 +46,37 @@ const jitter = () => (Math.random() - 0.5) * 0.01; // ~±500m
 | Emotion pie/bar chart | `emotion_breakdown_24h` view or `get_area_insights` |
 | Trend alert (“+15% stress”) | `get_area_insights` → `trend.delta_pct` |
 | “People like you” count | `get_similar_feeling_count` RPC |
+| Institutional contact form | `contact_inquiries` insert |
 
 Prefer **RPC/views** for dashboards — do not scan all rows for stats.
+
+## Table: `contact_inquiries`
+
+Run `backend/supabase/contact-inquiries.sql` in SQL Editor (included in `setup.sql` for fresh installs).
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `id` | uuid | auto |
+| `created_at` | timestamptz | auto |
+| `intent` | text | `demo`, `pilot`, `partner`, `data` |
+| `name` | text | required |
+| `email` | text | required |
+| `organization` | text | optional |
+| `message` | text | optional |
+
+**RLS:** `anon` / `authenticated` can **insert only**. Read inquiries in Supabase Dashboard → Table Editor (service role).
+
+```ts
+await supabase.from('contact_inquiries').insert({
+  intent: 'pilot',
+  name: 'Jane Doe',
+  email: 'jane@university.edu',
+  organization: 'Addis University',
+  message: 'Interested in a campus pilot.',
+});
+```
+
+If Supabase is not configured, the contact form falls back to `mailto:partners@emotionalweathermap.com` (override with `NEXT_PUBLIC_PARTNERS_EMAIL`).
 
 ## Supabase client calls
 

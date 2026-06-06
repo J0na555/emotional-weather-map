@@ -3,6 +3,7 @@ import { Bell, FileBarChart, Map, ShieldCheck } from 'lucide-react'
 import { PageHero } from '@/components/page-hero'
 import { SectionLabel } from '@/components/section-label'
 import { SolutionsExplorer } from '@/components/solutions/solutions-explorer'
+import { InstitutionAccess } from '@/components/institution/institution-access'
 import { ButtonLink } from '@/components/button-link'
 
 export const metadata: Metadata = {
@@ -46,6 +47,10 @@ export default function SolutionsPage() {
           Start a pilot program
         </ButtonLink>
       </PageHero>
+
+      <section className="mx-auto max-w-7xl px-5 pb-4 sm:px-8">
+        <InstitutionAccess />
+      </section>
 
       <SolutionsExplorer />
 

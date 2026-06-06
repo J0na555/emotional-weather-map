@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { PARTNERS_EMAIL, partnersMailto } from '@/lib/site-contact'
 
 const groups = [
   {
@@ -10,19 +11,19 @@ const groups = [
     ],
   },
   {
-    title: 'Solutions',
+    title: 'For institutions',
     links: [
-      { href: '/solutions', label: 'For Universities' },
-      { href: '/solutions', label: 'For Companies & HR' },
-      { href: '/solutions', label: 'For Cities & NGOs' },
+      { href: '/solutions', label: 'Solutions overview' },
+      { href: '/contact', label: 'Request a pilot' },
+      { href: '/contact', label: 'Book a demo' },
     ],
   },
   {
     title: 'Company',
     links: [
-      { href: '/about', label: 'Our Philosophy' },
-      { href: '/about', label: 'Ethics & Privacy' },
-      { href: '/contact', label: 'Pilot Programs' },
+      { href: '/about', label: 'Our vision' },
+      { href: '/about', label: 'Ethics & privacy' },
+      { href: '/contact', label: 'Institutional access' },
     ],
   },
 ]
@@ -40,6 +41,12 @@ export function SiteFooter() {
               <p className="mt-5 text-sm leading-relaxed text-background/70 font-light max-w-sm">
                 We believe that a community that can see its own emotional climate is one that can respond with active care and compassion. Building a new layer of emotional infrastructure for society.
               </p>
+              <a
+                href={partnersMailto('Institutional inquiry')}
+                className="mt-5 inline-block text-sm font-medium text-background/90 underline underline-offset-4 transition-colors hover:text-background"
+              >
+                {PARTNERS_EMAIL}
+              </a>
             </div>
             <div className="mt-8 flex flex-wrap gap-3">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-background/20 px-3.5 py-1 text-xs text-background/60">
@@ -79,6 +86,12 @@ export function SiteFooter() {
           <div className="flex items-center gap-6">
             <Link href="/about" className="hover:text-background transition-colors">Privacy Philosophy</Link>
             <Link href="/about" className="hover:text-background transition-colors">Ethics Charter</Link>
+            <a
+              href={partnersMailto()}
+              className="hover:text-background transition-colors"
+            >
+              {PARTNERS_EMAIL}
+            </a>
           </div>
         </div>
       </div>

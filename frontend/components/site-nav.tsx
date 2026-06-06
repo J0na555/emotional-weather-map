@@ -75,7 +75,7 @@ export function SiteNav() {
             variant="ghost"
             className="rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/40 px-5 py-2"
           >
-            Talk to us
+            For institutions
           </ButtonLink>
           <ButtonLink
             href="/check-in"
@@ -119,7 +119,7 @@ export function SiteNav() {
               variant="outline"
               className="rounded-full justify-center py-2.5 text-base border-foreground/30 text-foreground"
             >
-              Talk to us
+              For institutions
             </ButtonLink>
             <ButtonLink
               href="/check-in"
